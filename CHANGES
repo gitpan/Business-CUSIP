@@ -1,3 +1,8 @@
+Version 1.02
+  04/01/02 - Fixed error in test cases of t/04-bad.t. It was looking for the
+    string "not correct" from Algorith::LUHN, which changed it to "incoorect."
+    Test now looks for either string.
+
 Version 1.01
   03/27/02 - Fixed error() to return undef for valid CUSIP, as documented.
     Set $ERROR to undef after successful is_valid() call.

@@ -60,9 +60,9 @@ foreach ('92940*118', '000772020', '20427#109', '38080R103', '8169951D6') {
 foreach ('92940*117', '000772029', '20427#108', '38080R102') {
   my $csp = Business::CUSIP->new($_);
   ok($csp->is_valid, '', "  Expected an error, but CUSIP $_ seems to be valid.");
-  ok($Business::CUSIP::ERROR, qr/^Check digit not correct/,
+  ok($Business::CUSIP::ERROR, qr/^Check digit (?:in|not )correct/,
      "  Got an unexpected error: $Business::CUSIP::ERROR.");
-  ok($csp->error, qr/^Check digit not correct/,
+  ok($csp->error, qr/^Check digit (?:in|not )correct/,
      "  Got an unexpected error: ".$csp->error);
 }
 
