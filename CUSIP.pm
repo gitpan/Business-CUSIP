@@ -15,7 +15,7 @@ Business::CUSIP - Verify Committee on Uniform Security Identification Procedures
   $csp = Business::CUSIP->new('392690QT', 1);
   $chk = $csp->check_digit;
   $csp->cusip($csp->cusip.$chk);
-  print $csp->is_valid ? "Looks good." : "Invalid: ", $csp->error, "\n";
+  print $csp->is_valid ? "Looks good." : "Invalid: ", $Business::CUSIP::ERROR, "\n";
 
 =head1 DESCRIPTION
 
@@ -30,12 +30,15 @@ use strict;
 use Algorithm::LUHN ();
 # Add additional characters to Algorithm::LUHN::valid_chars so CUSIPs can be
 # validated. 
-Algorithm::LUHN::valid_chars(map {$_ => ord($_)-ord('A')+10} 'A'..'Z');
+{
+my $ct = 10;
+Algorithm::LUHN::valid_chars(map {$_ => $ct++} 'A'..'Z');
+}
 Algorithm::LUHN::valid_chars('*',36, '@',37, '#',38);
 
 use vars qw($VERSION $ERROR);
 
-$VERSION = '0.01';
+$VERSION = '0.02';
 
 =head1 METHODS
 
@@ -51,7 +54,7 @@ CUSIPs.
 =cut
 sub new {
   my ($class, $cusip, $fixed_income) = @_;
-  bless [uc($cusip), ($fixed_income || 0)], $class;
+  bless [$cusip, ($fixed_income || 0)], $class;
 }
 
 =item cusip([CUSIP_NUMBER])
@@ -63,7 +66,7 @@ return the CUSIP number.
 =cut
 sub cusip {
   my $self = shift;
-  $self->[0] = uc(shift) if @_;
+  $self->[0] = shift if @_;
   return $self->[0];
 }
 
@@ -82,12 +85,33 @@ sub is_fixed_income {
 
 =item is_valid()
 
-Returns whether the CUSIP is valid. If it is not valid, $Business::CUSIP::ERROR
-will contain a reason why.
+Returns true if the checksum of the CUSIP is correct otherwise it returns
+false and $Business::CUSIP::ERROR will contain a description of the problem.
 
 =cut
 sub is_valid {
   my $self = shift;
+  my $val = $self->cusip;
+
+  # CUSIPs are 9 digits. Chars 1-3 are numeric. Chars 4-8 are alphanum
+  # plus '@', '#', '*'. Char 9 is numeric.
+  unless (length($val) == 9) {
+    $ERROR = "CUSIP must be 9 characters long.";
+    return '';
+  }
+  unless ($val =~ /^\d{3}/) {
+    $ERROR = "Characters 1-3 must be numeric.";
+    return '';
+  }
+  unless ($val =~ /^.{3}[A-Z0-9@#*]{5}/) {
+    $ERROR = "Characters 4-8 must be A-Z, 0-9, @, #, *.";
+    return '';
+  }
+  unless ($val =~ /\d$/) {
+    $ERROR = "Character 9 (the check digit) must be numeric.";
+    return '';
+  }
+
   # From the CUSIP spec:
   #   To avoid confusion, the fixed income issue number assignments have
   #   omitted the alphabetic "I" and numeric "1 " as well as the alphabetic
@@ -95,9 +119,12 @@ sub is_valid {
   # The issuer number is in positions 7 & 8.
   if ($self->is_fixed_income && substr($self->cusip,6,2) =~ /[I1O0]/) {
    $ERROR="Fixed income CUSIP cannot contain I, 1, O, or 0 in the issue number.";
-    return 0;
+    return '';
   }
-  return Algorithm::LUHN::is_valid($self->cusip);
+
+  my $r = Algorithm::LUHN::is_valid($self->cusip);
+  $ERROR = $Algorithm::LUHN::ERROR unless $r;
+  return $r;
 }
 
 =item check_digit()
@@ -109,18 +136,9 @@ recalculates the check_digit each time.
 =cut
 sub check_digit {
   my $self = shift;
-  return Algorithm::LUHN::check_digit(substr($self->cusip(), 0, 8));
-}
-
-=item Business::CUSIP::error()
-
-Returns the current value of $Business::CUSIP::error, which holds the reason
-of the most is_valid failure
-
-=cut
-
-sub error {
-  return $Business::CUSIP::ERROR;
+  my $r = Algorithm::LUHN::check_digit(substr($self->cusip(), 0, 8));
+  $ERROR = $Algorithm::LUHN::ERROR unless defined $r;
+  return $r;
 }
 
 1;

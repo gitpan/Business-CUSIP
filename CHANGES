@@ -1,0 +1,7 @@
+Version 0.02
+
+ 05/03/01 - Added a lot of validations in is_valid. Added new test t/04-bad.t
+   to check new validations.
+
+ 05/01/01 - Changed the way the list of A..Z valid_chars is generated to be
+    more explicit.
