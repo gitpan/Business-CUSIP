@@ -1,0 +1,7 @@
+README
+CUSIP.pm
+CHANGES
+MANIFEST
+Makefile.PL
+t/01-vanilla.t
+t/02-fixedinc.t
