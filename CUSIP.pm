@@ -38,7 +38,7 @@ Algorithm::LUHN::valid_chars('*',36, '@',37, '#',38);
 
 use vars qw($VERSION $ERROR);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 
 =head1 METHODS
 
@@ -113,6 +113,8 @@ sub is_valid {
   my $self = shift;
   my $val = $self->cusip;
 
+  $ERROR = undef;
+
   # CUSIPs are 9 digits. Chars 1-3 are numeric. Chars 4-8 are alphanum
   # plus '@', '#', '*'. Char 9 is numeric.
   unless (length($val) == 9) {
@@ -154,8 +156,8 @@ not valid. Otherwise returns undef.
 
 =cut
 sub error {
-  my $self = shift;
-  return $ERROR unless $self->is_valid;
+  shift->is_valid;
+  return $ERROR;
 }
 
 =item check_digit()

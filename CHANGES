@@ -1,3 +1,7 @@
+Version 1.01
+  03/27/02 - Fixed error() to return undef for valid CUSIP, as documented.
+    Set $ERROR to undef after successful is_valid() call.
+
 Version 1.00
   11/18/01 - Added the error() method.
 
