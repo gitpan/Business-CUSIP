@@ -1,3 +1,6 @@
+Version 0.03
+  05/09/01 - Added t/05-acc.t test.
+
 Version 0.02
 
  05/03/01 - Added a lot of validations in is_valid. Added new test t/04-bad.t

@@ -7,3 +7,4 @@ t/01-vanilla.t
 t/02-fixedinc.t
 t/03-invalch.t
 t/04-bad.t
+t/05-acc.t

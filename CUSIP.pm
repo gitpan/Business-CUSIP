@@ -19,16 +19,16 @@ Business::CUSIP - Verify Committee on Uniform Security Identification Procedures
 
 =head1 DESCRIPTION
 
-This module helps verify CUSIPs, which are financial security identifiers
-issued by the Standard & Poor's Company. This module cannot tell if a CUSIP
-references a real security, but it can tell you if the given CUSIP is properly
-formatted.
+This module verifies CUSIPs, which are financial identifiers issued by the
+Standard & Poor's Company for US and Canadian securities. This module cannot
+tell if a CUSIP references a real security, but it can tell you if the given
+CUSIP is properly formatted.
 
 =cut
 
 use strict;
 use Algorithm::LUHN ();
-# Add additional characters to Algorithm::LUHN::valid_chars so CUSIPs can be
+#  Add additional characters to Algorithm::LUHN::valid_chars so CUSIPs can be
 # validated. 
 {
 my $ct = 10;
@@ -38,7 +38,7 @@ Algorithm::LUHN::valid_chars('*',36, '@',37, '#',38);
 
 use vars qw($VERSION $ERROR);
 
-$VERSION = '0.02';
+$VERSION = '0.03';
 
 =head1 METHODS
 
@@ -46,7 +46,7 @@ $VERSION = '0.02';
 
 =item new([CUSIP_NUMBER[, IS_FIXED_INCOME]])
 
-The new constructor takes to optional arguments: the CUSIP number and a Boolean
+The new constructor takes two optional arguments: the CUSIP number and a Boolean
 value signifying whether this CUSIP refers to a fixed income security. CUSIPs
 for fixed income securities are validated a little differently than other
 CUSIPs.
@@ -81,6 +81,26 @@ sub is_fixed_income {
   my $self = shift;
   $self->[1] = shift if @_;
   return $self->[1];
+}
+
+=item issuer_num()
+
+Returns the issuer number from the CUSIP number.
+
+=cut
+sub issuer_num {
+  my $self = shift;
+  return substr($self->cusip, 0, 6);
+}
+
+=item issuer_num()
+
+Returns the issue number from the CUSIP number.
+
+=cut
+sub issue_num {
+  my $self = shift;
+  return substr($self->cusip, 6, 2);
 }
 
 =item is_valid()
@@ -143,6 +163,7 @@ sub check_digit {
 
 1;
 __END__
+=back
 
 =head1 CAVEATS
 
