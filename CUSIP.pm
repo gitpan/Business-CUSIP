@@ -38,7 +38,7 @@ Algorithm::LUHN::valid_chars('*',36, '@',37, '#',38);
 
 use vars qw($VERSION $ERROR);
 
-$VERSION = '0.03';
+$VERSION = '1.00';
 
 =head1 METHODS
 
@@ -147,6 +147,17 @@ sub is_valid {
   return $r;
 }
 
+=item error()
+
+If the CUSIP object is not valid (! is_valid()) it returns the reason it is 
+not valid. Otherwise returns undef.
+
+=cut
+sub error {
+  my $self = shift;
+  return $ERROR unless $self->is_valid;
+}
+
 =item check_digit()
 
 This method returns the checksum of the given object. If the CUSIP number of
@@ -184,5 +195,9 @@ Copyright (c) 2001 Tim Ayers. All rights reserved.
 
 This program is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.
+
+=head1 SEE ALSO
+
+General CUSIP information may be found at http://www.cusip.com.
 
 =cut
