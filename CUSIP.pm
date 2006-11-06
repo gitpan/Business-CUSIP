@@ -38,7 +38,7 @@ Algorithm::LUHN::valid_chars('*',36, '@',37, '#',38);
 
 use vars qw($VERSION $ERROR);
 
-$VERSION = '1.02';
+$VERSION = '1.03';
 
 =head1 METHODS
 
@@ -93,7 +93,7 @@ sub issuer_num {
   return substr($self->cusip, 0, 6);
 }
 
-=item issuer_num()
+=item issue_num()
 
 Returns the issue number from the CUSIP number.
 

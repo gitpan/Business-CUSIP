@@ -1,3 +1,6 @@
+Version 1.03
+  06/11/06 - Fixed a typo in the documentation for issue_num().
+
 Version 1.02
   04/01/02 - Fixed error in test cases of t/04-bad.t. It was looking for the
     string "not correct" from Algorith::LUHN, which changed it to "incoorect."
